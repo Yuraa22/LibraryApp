@@ -1,0 +1,1 @@
+# This is ASP.NET Core app with ReactJS for frontend
