@@ -126,7 +126,7 @@ export class AddUser extends Component {
                         <input className="form-control" type="date" name="dateOfBirth"
                             defaultValue={moment(this.state.userData.dateOfBirth).format('YYYY-MM-DD')}
                             onChange={this.handleInputChange} required />
-                    </div>
+                        </div>
                 </div >
                 <div className="form-group">
                     <button type="submit" className="btn btn-secondary">Save</button>
@@ -143,4 +143,5 @@ export class UserData {
     lastName;
     dateOfBirth;
     isValid;
+    userContacts;
 }

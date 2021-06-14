@@ -16,5 +16,7 @@ namespace LibraryApp.Model
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateOfBirth { get; set; }
         public bool? IsValid { get; set; }
+
+        public virtual ICollection<UserContact> UserContacts { get; set; }
     }
 }

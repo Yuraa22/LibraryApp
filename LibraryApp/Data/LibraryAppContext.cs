@@ -18,9 +18,6 @@ namespace LibraryApp.Data
         {
             modelBuilder.Entity<Rent>()
                 .HasKey(r => new { r.UserId, r.ISBN });
-
-            modelBuilder.Entity<UserContact>()
-                .HasKey(uc => new { uc.UserId, uc.Type });
         }
 
         public DbSet<User> User { get; set; }

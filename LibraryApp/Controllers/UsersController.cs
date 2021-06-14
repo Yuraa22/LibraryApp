@@ -48,7 +48,7 @@ namespace LibraryApp.Controllers
         {
             if (id != user.Id)
             {
-                //return BadRequest();
+                return new JsonResult("400");
             }
 
             _context.Entry(user).State = EntityState.Modified;
@@ -61,7 +61,7 @@ namespace LibraryApp.Controllers
             {
                 if (!UserExists(id))
                 {
-                    //return NotFound();
+                    return new JsonResult("404");
                 }
                 else
                 {
@@ -82,23 +82,20 @@ namespace LibraryApp.Controllers
             await _context.SaveChangesAsync();
 
             return user;
-            //return new JsonResult("Created user " + user.Id);
-            //return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
 
         [Route("[action]")]
         [HttpPost]
-        public async Task<ActionResult<User>> PostUserWithLink()
+        public async Task<ActionResult<User>> PostFromImageSource(dynamic imageSource)
         {
             HttpExample httpExample = new HttpExample();
-            User user = await httpExample.MakePostRequest();
+            User user = await httpExample.MakePostRequest(imageSource.ToString());
             _context.User.Add(user);
             await _context.SaveChangesAsync();
 
             return user;
-            //return new JsonResult("Created user " + user.Id);
-            //return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
+
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]

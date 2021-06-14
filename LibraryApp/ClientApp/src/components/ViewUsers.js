@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import * as moment from 'moment';
 
 export class ViewUsers extends Component {
@@ -7,11 +6,14 @@ export class ViewUsers extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { users: [], loading: true };
+    this.state = { users: [], loading: true, imageSource: "" };
 
     this.handleDelete = this.handleDelete.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
+    this.handleCreate = this.handleCreate.bind(this);
     this.handleAdd = this.handleAdd.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleViewContacts = this.handleViewContacts.bind(this);
   }
 
   componentDidMount() {
@@ -39,13 +41,22 @@ export class ViewUsers extends Component {
         this.props.history.push("edit-user/" + id);
     }
 
+    handleViewContacts(id) {
+        this.props.history.push("view-user-contacts/" + id);
+    }
+
+    handleCreate() {
+        this.props.history.push("add-user");
+    }
+
     handleAdd() {
-        fetch('api/users/postuserwithlink', {
+        fetch('api/users/postfromimagesource/', {
             method: 'POST',
             headers: {
+                'Accept': 'application/json',
                 "Content-Type": "application/json",
             },
-            //body: JSON.stringify(this.state.userData),
+            body: JSON.stringify(this.state.imageSource),
                 
         }).then(response => response.json())
           .then(data => {
@@ -55,7 +66,14 @@ export class ViewUsers extends Component {
         });
     }
 
+    handleInputChange(event) {
+        const target = event.target;
+        const name = target.name;
+        const value = target.value;
 
+        if (name === 'postImageSource')
+            this.state.imageSource = value;
+    }
 
   renderUsersTable(users) {
     return (
@@ -77,8 +95,9 @@ export class ViewUsers extends Component {
               <td>{moment(user.dateOfBirth).format('DD-MM-YYYY')}</td>
               <td>{user.isValid?String(user.isValid):'N/A'}</td>
               <td>
-                <button className="action" class="btn btn-secondary" onClick={(id) => this.handleEdit(user.id)}>Edit</button>
-                <button className="action" class="btn btn-secondary" onClick={(id) => this.handleDelete(user.id)}>Delete</button>
+                <button className="action" class="btn btn-secondary" onClick={() => this.handleEdit(user.id)}>Edit</button>
+                <button className="action" class="btn btn-secondary" onClick={() => this.handleDelete(user.id)}>Delete</button>
+                <button className="action" class="btn btn-secondary" onClick={() => this.handleViewContacts(user.id)}>Contact Info</button>
               </td>
             </tr>
           )}
@@ -96,8 +115,11 @@ export class ViewUsers extends Component {
       <div>
       <h1 id="tabelLabel" >Library users</h1>
       <p>
-         <Link class ="btn btn-secondary" to="/add-user">Create New</Link>
-         <button className="action" class ="btn btn-secondary" onClick={(id) => this.handleAdd()}>Create user from blinkID</button>
+        <button class="btn btn-secondary" onClick={() => this.handleCreate()}>Create New</button>
+      </p>
+      <p>
+        <button className="action" class="btn btn-secondary" onClick={() => this.handleAdd()}>Create user from image source</button>
+        <input type="text" name="postImageSource" onChange={this.handleInputChange} />
       </p>
         {contents}
       </div>
@@ -109,4 +131,13 @@ export class ViewUsers extends Component {
     const data = await response.json();
     this.setState({ users: data, loading: false });
   }
+}
+
+export class UserData {
+    id;
+    firstName;
+    lastName;
+    dateOfBirth;
+    isValid;
+    userContacts;
 }

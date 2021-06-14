@@ -26,6 +26,13 @@ namespace LibraryApp.Controllers
             return await _context.UserContact.ToListAsync();
         }
 
+        [Route("[action]/{userId}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<UserContact>>> ByUserId(int userId)
+        {
+            return await _context.UserContact.Where(uc => uc.UserId == userId).ToListAsync();
+        }
+
         // GET: api/UserContacts/5
         [HttpGet("{id}")]
         public async Task<ActionResult<UserContact>> GetUserContact(int id)

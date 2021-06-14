@@ -22,7 +22,7 @@ namespace LibraryApp
 
 
         /// Make a dummy request
-        public async Task<User> MakePostRequest()
+        public async Task<User> MakePostRequest(string imageSource)
         {
             string url = "https://api.microblink.com/v1/recognizers/mrz-id";
 
@@ -33,14 +33,14 @@ namespace LibraryApp
             //    ""imageSource"": ""https://storage.googleapis.com/microblink-data-public/microblink-api/test-set/blinkid/CRO_ID_BACK/CRO_ID_BACK_sample_with_disclaimer.jpg""
             //}";
 
-            //MrzIdRequest content = (MrzIdRequest)JsonConvert.DeserializeObject(json);
+            //string imageSource = "https://storage.googleapis.com/microblink-data-public/microblink-api/test-set/blinkid/CRO_ID_BACK/CRO_ID_BACK_sample_with_disclaimer.jpg";
 
             MrzIdRequest content = new MrzIdRequest()
             {
                 returnFullDocumentImage = false,
                 returnFaceImage = false,
                 returnSignatureImage = false,
-                imageSource = "https://storage.googleapis.com/microblink-data-public/microblink-api/test-set/blinkid/CRO_ID_BACK/CRO_ID_BACK_sample_with_disclaimer.jpg"
+                imageSource = imageSource
             };
 
             User user = await PostAsync(content, url);
@@ -76,10 +76,17 @@ namespace LibraryApp
             string responseBody = await response.Content.ReadAsStringAsync();
 
             //Deserialize Body to object
-            var result = (JObject)JsonConvert.DeserializeObject(responseBody);
-            string OCR = result["result"]["mrzData"]["rawMrzString"].ToString();
-            User user = Utility.ParseOCRData(OCR);
-            return user;
+            try
+            {
+                var result = (JObject)JsonConvert.DeserializeObject(responseBody);
+                string OCR = result["result"]["mrzData"]["rawMrzString"].ToString();
+                User user = Utility.ParseOCRData(OCR);
+                return user;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }
