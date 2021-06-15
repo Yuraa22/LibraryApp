@@ -1,27 +1,28 @@
 import React, { Component } from 'react';
-import * as moment from 'moment';
 
-export class AddUser extends Component {
+export class AddUserContact extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { title: "", userData: new UserData };
-
+        this.state = { title: "", contactData: new UserContact };
+        
         var id = this.props.match.params["id"];
 
-        // This will set state for Edit user  
         if (id > 0) {
-            fetch('api/users/' + id)
+            fetch('api/usercontacts/' + id)
                 .then(response => response.json())
                 .then(data => {
-                    this.setState({ title: "Edit", userData: data });
+                    this.setState({ title: "Edit", contactData: data });
                 });
         }
 
         // This will set state for Add user  
         else {
-            this.state = { title: "Create", loading: false, userData: new UserData };
+            this.state = { title: "Create", loading: false, contactData: new UserContact };
         }
+
+        this.state.contactData.userId = this.props.match.params["userId"];
+        this.state.contactData.id = id;
 
         // This binding is necessary to make "this" work in the callback  
         this.handleSave = this.handleSave.bind(this);
@@ -36,7 +37,7 @@ export class AddUser extends Component {
 
         return <div>
             <h1>{this.state.title}</h1>
-            <h3>User</h3>
+            <h3>User Contact</h3>
             <hr />
             {contents}
         </div>;
@@ -47,33 +48,33 @@ export class AddUser extends Component {
         event.preventDefault();
         const data = new FormData(event.target);
 
-        // PUT request for Edit user.  
-        if (this.state.userData.id) {
-            fetch('api/users/' + this.state.userData.id, {
+        // PUT request for Edit user contact.  
+        if (this.state.contactData.id) {
+            fetch('api/usercontacts/' + this.state.contactData.id, {
                 method: 'PUT',
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(this.state.userData),
+                body: JSON.stringify(this.state.contactData),
 
             }).then((response) => response.json())
                 .then((responseJson) => {
-                    this.props.history.push("/view-users");
+                    this.props.history.push("/view-user-contacts/" + this.state.contactData.userId);
                 })
         }
 
-        // POST request for Add user.  
+        // POST request for Add user contact.  
         else {
-            fetch('api/users', {
+            fetch('api/usercontacts', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(this.state.userData),
+                body: JSON.stringify(this.state.contactData),
 
             }).then((response) => response.json())
                 .then((responseJson) => {
-                    this.props.history.push("/view-users");
+                    this.props.history.push("/view-user-contacts/" + this.state.contactData.userId);
                 })
         }
     }
@@ -81,7 +82,7 @@ export class AddUser extends Component {
     // This will handle Cancel button click event.  
     handleCancel(e) {
         e.preventDefault();
-        this.props.history.push("/view-users");
+        this.props.history.push("/view-user-contacts/" + this.state.contactData.userId);
     }
 
     handleInputChange(event) {
@@ -89,14 +90,11 @@ export class AddUser extends Component {
         const name = target.name;
         const value = target.value;
 
-        if (name === 'firstName')
-            this.state.userData.firstName = value;
+        if (name === 'type')
+            this.state.contactData.type = value;
 
-        if (name === 'lastName')
-            this.state.userData.lastName = value;
-
-        if (name === 'dateOfBirth')
-            this.state.userData.dateOfBirth = value;
+        if (name === 'value')
+            this.state.contactData.value = value;
     }
 
     // Returns the HTML Form to the render() method.  
@@ -104,29 +102,24 @@ export class AddUser extends Component {
         return (
             <form onSubmit={this.handleSave} >
                 <div className="form-group row" >
-                    <input type="hidden" name="id" value={this.state.userData.id} />
+                    <input type="hidden" name="id" value={this.state.contactData.id} />
+                </div>
+                <div className="form-group row" >
+                    <input type="hidden" name="userId" value={this.state.contactData.userId} />
                 </div>
                 < div className="form-group row" >
-                    <label className=" control-label col-md-12" htmlFor="firstName">First Name</label>
+                    <label className=" control-label col-md-12" htmlFor="type">Contact Type</label>
                     <div className="col-md-4">
-                        <input className="form-control" type="text" name="firstName" defaultValue={this.state.userData.firstName}
+                        <input className="form-control" type="text" name="type" defaultValue={this.state.contactData.type}
                             onChange={this.handleInputChange} required />
                     </div>
                 </div >
                 < div className="form-group row" >
-                    <label className=" control-label col-md-12" htmlFor="lastName">Last Name</label>
+                    <label className=" control-label col-md-12" htmlFor="lastName">Contact value</label>
                     <div className="col-md-4">
-                        <input className="form-control" type="text" name="lastName" defaultValue={this.state.userData.lastName}
+                        <input className="form-control" type="text" name="value" defaultValue={this.state.contactData.value}
                             onChange={this.handleInputChange} required />
                     </div>
-                </div >
-                <div className="form-group row">
-                    <label className="control-label col-md-12" htmlFor="dateOfBirth">Date of Birth</label>
-                    <div className="col-md-4">
-                        <input className="form-control" type="date" name="dateOfBirth"
-                            defaultValue={moment(this.state.userData.dateOfBirth).format('YYYY-MM-DD')}
-                            onChange={this.handleInputChange} required />
-                        </div>
                 </div >
                 <div className="form-group">
                     <button type="submit" className="btn btn-secondary">Save</button>
@@ -137,10 +130,9 @@ export class AddUser extends Component {
     }
 }
 
-export class UserData {
+export class UserContact {
     id;
-    firstName;
-    lastName;
-    dateOfBirth;
-    isValid;
+    userId;
+    type;
+    value;
 }

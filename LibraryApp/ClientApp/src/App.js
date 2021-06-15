@@ -7,6 +7,7 @@ import { ViewUserContacts } from './components/ViewUserContacts';
 
 import './custom.css'
 import { AddUser } from './components/AddUser';
+import { AddUserContact } from './components/AddUserContact';
 
 export default class App extends Component {
   static displayName = App.name;
@@ -18,6 +19,8 @@ export default class App extends Component {
             <Route path='/view-users' component={ViewUsers} />
             <Route path='/add-user' component={AddUser} />
             <Route path='/edit-user/:id' component={AddUser} />
+            <Route path='/add-user-contact/:userId' component={AddUserContact} />
+            <Route path='/edit-user-contact/:userId/:id' component={AddUserContact} />
             <Route path='/view-user-contacts/:userId' component={ViewUserContacts} />
       </Layout>
     );

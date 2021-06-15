@@ -6,7 +6,7 @@ export class ViewUserContacts extends Component {
 
     var userId = this.props.match.params["userId"];
 
-      this.state = { user: new UserData, userId: userId, usercontacts: [], loading: true };
+      this.state = { user: new UserData, userId: userId, userContacts: [], loading: true };
 
     this.handleDelete = this.handleDelete.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
@@ -27,7 +27,7 @@ export class ViewUserContacts extends Component {
             }).then(data => {
                 this.setState(
                     {
-                        usercontacts: this.state.userContacts.filter((rec) => {
+                        userContacts: this.state.userContacts.filter((rec) => {
                             return (rec.id != id);
                         })
                     });
@@ -36,11 +36,11 @@ export class ViewUserContacts extends Component {
     }
 
     handleEdit(id) {
-        this.props.history.push("edit-user-contact/" + this.state.userId + "/" + id);
+        this.props.history.push("/edit-user-contact/" + this.state.userId + "/" + id);
     }
 
     handleCreate() {
-        this.props.history.push("add-user-contact" + this.state.userId);
+        this.props.history.push("/add-user-contact/" + this.state.userId);
     }
 
   renderUserContactsTable(userContacts) {
